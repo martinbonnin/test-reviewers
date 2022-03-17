@@ -1,0 +1,78 @@
+mutation UpdatePullRequestReviewers($id: ID!, $userIds: [ID!], $teamIds: [ID!], $union: Boolean) {
+  requestReviews(input:{pullRequestId: $id, userIds: $userIds, teamIds: $teamIds, union: $union}) {
+    actor {
+      login
+    }
+    pullRequest {
+      __typename
+      id
+      repository {
+        id
+        owner {
+          login
+        }
+      }
+      reviewRequests(first: 25) {
+        nodes {
+          id
+          requestedReviewer {
+            __typename
+          }
+        }
+      }
+      latestReviews(first: 25) {
+        nodes {
+          id
+          body
+        }
+      }
+      latestOpinionatedReviews(first:25, writersOnly: true) {
+        nodes {
+          body
+        }
+      }
+    }
+  }
+}
+query IssueOrPullRequest(
+  $repositoryOwner: String!,
+  $repositoryName: String!,
+  $number: Int!,
+) {
+  viewer {
+    login
+  }
+  repository(owner: $repositoryOwner, name: $repositoryName) {
+    issueOrPullRequest(number: $number) {
+      ... on PullRequest {
+        __typename
+        id
+        repository {
+          id
+          owner {
+            login
+          }
+        }
+        reviewRequests(first: 25) {
+          nodes {
+            id
+            requestedReviewer {
+              __typename
+            }
+          }
+        }
+        latestReviews(first: 25) {
+          nodes {
+            id
+            body
+          }
+        }
+        latestOpinionatedReviews(first:25, writersOnly: true) {
+          nodes {
+            body
+          }
+        }
+      }
+    }
+  }
+}
